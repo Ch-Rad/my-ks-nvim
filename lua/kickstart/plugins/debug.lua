@@ -13,6 +13,7 @@ vim.pack.add {
   'https://github.com/mason-org/mason.nvim',
   'https://github.com/jay-babu/mason-nvim-dap.nvim',
   'https://github.com/leoluz/nvim-dap-go',
+  'https://github.com/mfussenegger/nvim-dap-python',
 }
 
 -- Basic debugging keymaps, feel free to change to your liking!
@@ -69,6 +70,7 @@ dapui.setup {
   },
 }
 
+
 -- Change breakpoint icons
 -- vim.api.nvim_set_hl(0, 'DapBreak', { fg = '#e51400' })
 -- vim.api.nvim_set_hl(0, 'DapStop', { fg = '#ffcc00' })
@@ -93,3 +95,8 @@ require('dap-go').setup {
     detached = vim.fn.has 'win32' == 0,
   },
 }
+
+-- Configure python debugger (debugpy)
+local dap_python = require('dap-python')
+-- Points to debugpy installed by Mason or system python
+dap_python.setup('python3')
