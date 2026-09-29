@@ -733,9 +733,50 @@ do
   --  See `:help lsp-config` for information about keys and how to configure
   ---@type table<string, vim.lsp.Config>
   local servers = {
-    -- clangd = {},
+    clangd = {},
     -- gopls = {},
-    -- pyright = {},
+    ty = {},
+    -- basedpyright = {
+    --   settings = {
+    --     basedpyright = {
+    --       analysis = {
+    --         -- Stops the server from scanning all of PyTorch/Pandas on every keystroke
+    --         autoImportCompletions = false,
+    --
+    --         -- Fast diagnostics (only analyze active open files)
+    --         diagnosticMode = 'openFilesOnly',
+    --
+    --         -- CRITICAL FOR DATA SCIENCE:
+    --         -- Set to 'basic' or 'standard' to avoid being spammed with missing stub errors
+    --         -- Options: "off", "basic", "standard", "strict", "recommended", "all"
+    --         typeCheckingMode = 'standard',
+    --
+    --         -- Do not scan virtual environments
+    --         exclude = {
+    --           '**/.venv',
+    --           '**/venv',
+    --           '**/__pycache__',
+    --         },
+    --
+    --         autoSearchPaths = true,
+    --         useLibraryCodeForTypes = false,
+    --         inlayHints = {
+    --           callArgumentNames = true,
+    --           variableTypes = true,
+    --           functionReturnTypes = true,
+    --         },
+    --
+    --         -- Optional: disable noisy rules for ML libraries
+    --         diagnosticSeverityOverrides = {
+    --           reportUnknownMemberType = 'none',
+    --           reportUnknownArgumentType = 'none',
+    --           reportUnknownVariableType = 'none',
+    --           reportMissingTypeStubs = 'none',
+    --         },
+    --       },
+    --     },
+    --   },
+    -- },
     -- tsc = {},
     --
     -- Some languages (like rust) have entire language plugins that can be useful:
@@ -827,7 +868,7 @@ do
       -- You can specify filetypes to autoformat on save here:
       local enabled_filetypes = {
         lua = true,
-        python = true,
+        -- python = true,
       }
       if enabled_filetypes[vim.bo[bufnr].filetype] then
         return { timeout_ms = 500 }
@@ -842,8 +883,8 @@ do
     formatters_by_ft = {
       -- rust = { 'rustfmt' },
       -- Conform can also run multiple formatters sequentially
-      python = { "ruff_format", "ruff_organize_imports" },
-      lua = {'stylua'}
+      python = { 'ruff_fix', 'ruff_format', 'ruff_organize_imports' },
+      lua = { 'stylua' },
       --
       -- You can use 'stop_after_first' to run the first available formatter from the list
       -- javascript = { "prettierd", "prettier", stop_after_first = true },
@@ -901,6 +942,15 @@ do
 
       -- For more advanced Luasnip keymaps (e.g. selecting choice nodes, expansion) see:
       --    https://github.com/L3MON4D3/LuaSnip?tab=readme-ov-file#keymaps
+      sources = {
+        default = { 'lsp', 'path', 'snippets', 'buffer' },
+        providers = {
+          lsp = {
+            -- Give large language models/LSPs up to 2 seconds to respond
+            timeout_ms = 2000,
+          },
+        },
+      },
     },
 
     appearance = {
@@ -1037,7 +1087,7 @@ do
   -- require 'custom.plugins.git'
 end
 
-local runner = require('custom.runner')
+local runner = require 'custom.runner'
 
 -- Run project / current file (IDE style)
 vim.keymap.set('n', '<leader>r', runner.run, { desc = '[R]un project or current file' })
